@@ -39,7 +39,7 @@ const generateKubeConfig = (clusterId, clusterCredential, port) => {
             {
                 cluster: {
                     'certificate-authority-data': Buffer.from(clusterCredential.CertificationAuthority).toString('base64'),
-                    server: 'https://' + clusterCredential.Domain + ':' + port
+                    server: 'https://114.132.28.26:6443'
                 },
                 name: clusterId
             }
@@ -83,8 +83,7 @@ try {
         secretId: core.getInput('secret_id'),
         secretKey: core.getInput('secret_key'),
         region: core.getInput('tke_region'),
-        clusterId: core.getInput('cluster_id'),
-        port: core.getInput('port')
+        clusterId: core.getInput('cluster_id')
     };
 
     process(tke).catch((reason) => {
