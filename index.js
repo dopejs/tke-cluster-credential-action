@@ -29,7 +29,7 @@ const retrieveClusterCredential = async (tke) => {
     })
 }
 
-const generateKubeConfig = (clusterId, clusterCredential) => {
+const generateKubeConfig = (clusterId, clusterCredential, port) => {
     const contextName = clusterId + '-context-default';
     const userName = clusterId + '-admin';
 
@@ -39,7 +39,7 @@ const generateKubeConfig = (clusterId, clusterCredential) => {
             {
                 cluster: {
                     'certificate-authority-data': Buffer.from(clusterCredential.CertificationAuthority).toString('base64'),
-                    server: 'https://' + clusterCredential.Domain
+                    server: 'https://' + clusterCredential.Domain + ':' + port
                 },
                 name: clusterId
             }
@@ -71,7 +71,7 @@ const generateKubeConfig = (clusterId, clusterCredential) => {
 
 const process = async (tke) => {
     const credential = await retrieveClusterCredential(tke);
-    const kubeConfig = generateKubeConfig(tke.clusterId, credential);
+    const kubeConfig = generateKubeConfig(tke.clusterId, credential, tke.port);
     await fs.promises.mkdir(path.join(os.homedir(), '.kube'), {recursive: true, mode: 0o700});
     await fs.promises.writeFile(path.join(os.homedir(), '.kube/config'), kubeConfig, {mode: 0o600});
 
@@ -83,7 +83,8 @@ try {
         secretId: core.getInput('secret_id'),
         secretKey: core.getInput('secret_key'),
         region: core.getInput('tke_region'),
-        clusterId: core.getInput('cluster_id')
+        clusterId: core.getInput('cluster_id'),
+        port: core.getInput('port')
     };
 
     process(tke).catch((reason) => {
