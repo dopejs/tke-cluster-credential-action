@@ -17,9 +17,6 @@ inputs:
   cluster_id:
     description: 'TKE cluster id'
     required: true
-  port:
-    description: 'TKE cluster server port'
-    required: true
 runs:
   using: 'node12'
   main: 'index.js'
